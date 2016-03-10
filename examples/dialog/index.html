@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Dialog Example Example</title>
+    <script src="../../build/react.js"></script>
+    <script src="../../build/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+  </head>
+  <body>
+    <div id="message"></div>
+
+    <script type="text/babel">
+      var DialogExample = React.createClass({
+        handleShowClick: function () {
+          console.log('clicked show')
+          console.log(this.refs.dialog.show())
+        },
+        handleShowModalClick: function () {
+          console.log('clicked showModal')
+          console.log(this.refs.dialog.showModal())
+        },
+        handleCancel: function () {
+          console.log('onCancel!')
+        },
+        handleClose: function () {
+          console.log('onClose!')
+        },
+        handleCloseClick: function () {
+          console.log('clicked close')
+          console.log(this.refs.dialog.close())
+        },
+
+        render: function () {
+          return (
+            <div>
+              <button onClick={this.handleShowClick}>
+                show
+              </button>
+              <button onClick={this.handleShowModalClick}>
+                show modal
+              </button>
+              <dialog
+                ref='dialog'
+                onCancel={this.handleCancel}
+                onClose={this.handleClose}
+              >
+                <h1>Dialog</h1>
+                <button onClick={this.handleCloseClick}>
+                  close
+                </button>
+              </dialog>
+            </div>
+          );
+        }
+      });
+      ReactDOM.render(
+        <DialogExample />,
+        document.getElementById('message')
+      );
+    </script>
+  </body>
+</html>
