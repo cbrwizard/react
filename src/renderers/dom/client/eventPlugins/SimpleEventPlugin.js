@@ -20,6 +20,8 @@ var SyntheticClipboardEvent = require('SyntheticClipboardEvent');
 var SyntheticEvent = require('SyntheticEvent');
 var SyntheticFocusEvent = require('SyntheticFocusEvent');
 var SyntheticKeyboardEvent = require('SyntheticKeyboardEvent');
+var SyntheticCloseEvent = require('SyntheticCloseEvent');
+var SyntheticCancelEvent = require('SyntheticCancelEvent');
 var SyntheticMouseEvent = require('SyntheticMouseEvent');
 var SyntheticDragEvent = require('SyntheticDragEvent');
 var SyntheticTouchEvent = require('SyntheticTouchEvent');
@@ -81,6 +83,18 @@ var eventTypes = {
     phasedRegistrationNames: {
       bubbled: keyOf({onClick: true}),
       captured: keyOf({onClickCapture: true}),
+    },
+  },
+  close: {
+    phasedRegistrationNames: {
+      bubbled: keyOf({onClose: true}),
+      captured: keyOf({onCloseCapture: true}),
+    },
+  },
+  cancel: {
+    phasedRegistrationNames: {
+      bubbled: keyOf({onCancel: true}),
+      captured: keyOf({onCancelCapture: true}),
     },
   },
   contextMenu: {
@@ -420,6 +434,8 @@ var topLevelEventsToDispatchConfig = {
   topCanPlay:         eventTypes.canPlay,
   topCanPlayThrough:  eventTypes.canPlayThrough,
   topClick:           eventTypes.click,
+  topClose:           eventTypes.close,
+  topCancel:          eventTypes.cancel,
   topContextMenu:     eventTypes.contextMenu,
   topCopy:            eventTypes.copy,
   topCut:             eventTypes.cut,
@@ -554,6 +570,12 @@ var SimpleEventPlugin = {
           return null;
         }
         /* falls through */
+      case topLevelTypes.topClose:
+        EventConstructor = SyntheticCloseEvent;
+        break;
+      case topLevelTypes.topCancel:
+        EventConstructor = SyntheticCancelEvent;
+        break;
       case topLevelTypes.topContextMenu:
       case topLevelTypes.topDoubleClick:
       case topLevelTypes.topMouseDown:
