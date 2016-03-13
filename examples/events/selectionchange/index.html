@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>selectionChange event Example</title>
+    <script src="../../../build/react.js"></script>
+    <script src="../../../build/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+  </head>
+  <body>
+    <div id="message"></div>
+
+    <script type="text/babel">
+      var SelectionChangeExample = React.createClass({
+        handleGlobalSelectionChange: function (event) {
+          console.log('React handler triggered on selectionChange on text');
+          console.log(event);
+        },
+
+        handleSelectionChange: function (event) {
+          console.log('React handler triggered on selectionChange on input');
+          console.log(event);
+        },
+
+        handleSelect: function (event) {
+          // this is supported by react, but only for inputs, textarea and content editable.
+          // console.log('React handler triggered onSelect');
+          // console.log(event);
+        },
+
+        render: function () {
+          return (
+            <div>
+              <p onSelectionChange={this.handleGlobalSelectionChange} onSelect={this.handleSelect}>
+                Here is some text. When you select the text on it, an event is being logged into the console. http://jsfiddle.net/KEHAv/40/
+              </p>
+              <input type='text' onSelectionChange={this.handleSelectionChange} onSelect={this.handleSelect} />
+            </div>
+          );
+        }
+      });
+      ReactDOM.render(
+        <SelectionChangeExample />,
+        document.getElementById('message')
+      );
+    </script>
+  </body>
+</html>
