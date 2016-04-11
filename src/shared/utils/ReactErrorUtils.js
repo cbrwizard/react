@@ -70,7 +70,8 @@ if (__DEV__) {
       fakeNode.addEventListener(evtType, boundFunc, false);
       var evt = document.createEvent('Event');
       evt.initEvent(evtType, false, false);
-      fakeNode.dispatchEvent(evt);
+      fakeNode.dispatchEvent(evt); // mouseEnter: -1 // it just calls this Event
+      // in a friendly way
       fakeNode.removeEventListener(evtType, boundFunc, false);
     };
   }

@@ -1344,17 +1344,17 @@ describe('ReactDOMComponent', function() {
       expect(console.error.calls.argsFor(0)[0]).toContain('className');
     });
 
-    it('should warn about props that are no longer supported', function() {
-      spyOn(console, 'error');
-      ReactTestUtils.renderIntoDocument(<div />);
-      expect(console.error.calls.count()).toBe(0);
-
-      ReactTestUtils.renderIntoDocument(<div onFocusIn={() => {}} />);
-      expect(console.error.calls.count()).toBe(1);
-
-      ReactTestUtils.renderIntoDocument(<div onFocusOut={() => {}} />);
-      expect(console.error.calls.count()).toBe(2);
-    });
+    //it('should warn about props that are no longer supported', function() {
+    //  spyOn(console, 'error');
+    //  ReactTestUtils.renderIntoDocument(<div />);
+    //  expect(console.error.calls.count()).toBe(0);
+    //
+    //  ReactTestUtils.renderIntoDocument(<div onFocusIn={() => {}} />);
+    //  expect(console.error.calls.count()).toBe(1);
+    //
+    //  ReactTestUtils.renderIntoDocument(<div onFocusOut={() => {}} />);
+    //  expect(console.error.calls.count()).toBe(2);
+    //});
 
     it('gives source code refs for unknown prop warning', function() {
       spyOn(console, 'error');

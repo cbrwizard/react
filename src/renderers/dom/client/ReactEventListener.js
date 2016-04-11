@@ -73,12 +73,13 @@ function handleTopLevelImpl(bookKeeping) {
 
   for (var i = 0; i < bookKeeping.ancestors.length; i++) {
     targetInst = bookKeeping.ancestors[i];
-    ReactEventListener._handleTopLevel(
+    ReactEventListener._handleTopLevel( // mouseEnter: -9
       bookKeeping.topLevelType,
       targetInst,
       bookKeeping.nativeEvent,
       getEventTarget(bookKeeping.nativeEvent)
     );
+    // here it gets info about event target's parents and passed it down
   }
 }
 
@@ -167,6 +168,9 @@ var ReactEventListener = {
     try {
       // Event queue being processed in the same cycle allows
       // `preventDefault`.
+      // mouseEnter: -9
+      // tranforms native event type and event itself into something closer
+      // to react events; calls them in a batch for optimization
       ReactUpdates.batchedUpdates(handleTopLevelImpl, bookKeeping);
     } finally {
       TopLevelCallbackBookKeeping.release(bookKeeping);

@@ -110,6 +110,7 @@ function executeDispatch(event, simulated, listener, inst) {
       event
     );
   } else {
+    // mouseenter: -2 // it just chooses how to call this event
     ReactErrorUtils.invokeGuardedCallback(type, listener, event);
   }
   event.currentTarget = null;
@@ -119,8 +120,8 @@ function executeDispatch(event, simulated, listener, inst) {
  * Standard/simple iteration through an event's collected dispatches.
  */
 function executeDispatchesInOrder(event, simulated) {
-  var dispatchListeners = event._dispatchListeners;
-  var dispatchInstances = event._dispatchInstances;
+  var dispatchListeners = event._dispatchListeners; // lists listeners; which is handleMouseOver AND! handleFormMouseOver
+  var dispatchInstances = event._dispatchInstances; // lists react elements; which is input AND! form
   if (__DEV__) {
     validateEventDispatches(event);
   }
@@ -138,7 +139,9 @@ function executeDispatchesInOrder(event, simulated) {
       );
     }
   } else if (dispatchListeners) {
-    executeDispatch(event, simulated, dispatchListeners, dispatchInstances);
+    executeDispatch(event, simulated, dispatchListeners, dispatchInstances); // mouseEnter: -3
+    // it dispatches this event since there is only one listener. If there were
+    // multiple ones, then it would have dispatched them 1 by 1.
   }
   event._dispatchListeners = null;
   event._dispatchInstances = null;

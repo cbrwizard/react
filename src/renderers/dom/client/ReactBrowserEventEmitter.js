@@ -285,7 +285,13 @@ var ReactBrowserEventEmitter = Object.assign({}, ReactEventEmitterMixin, {
               ReactBrowserEventEmitter.ReactEventListener.WINDOW_HANDLE
             );
           }
-        } else if (dependency === topLevelTypes.topFocus ||
+        }
+        // Commented so that onFocus/onBlur don't bubble.
+        // Remove when confirmed.
+        // Wrong - without these lines the events do not fire at all.
+        // Probably it's because we don't trap any events for focus/blur.
+        // Maybe we need to trap bubbled event. - No. This also breaks everything.
+        else if (dependency === topLevelTypes.topFocus ||
             dependency === topLevelTypes.topBlur) {
 
           if (isEventSupported('focus', true)) {
@@ -299,24 +305,34 @@ var ReactBrowserEventEmitter = Object.assign({}, ReactEventEmitterMixin, {
               'blur',
               mountAt
             );
-          } else if (isEventSupported('focusin')) {
-            // IE has `focusin` and `focusout` events which bubble.
-            // @see http://www.quirksmode.org/blog/archives/2008/04/delegating_the.html
-            ReactBrowserEventEmitter.ReactEventListener.trapBubbledEvent(
-              topLevelTypes.topFocus,
-              'focusin',
-              mountAt
-            );
-            ReactBrowserEventEmitter.ReactEventListener.trapBubbledEvent(
-              topLevelTypes.topBlur,
-              'focusout',
-              mountAt
-            );
           }
 
-          // to make sure blur and focus event listeners are only attached once
-          isListening[topLevelTypes.topBlur] = true;
-          isListening[topLevelTypes.topFocus] = true;
+
+
+        // TODO: check if this fires in Chrome, Firefox and why.
+        // Try capturing them here.
+        // Maybe we need to add topFocusIn and topFocusOut and refer them here.
+        //   } else if (isEventSupported('focusin')) {
+        //     // IE has `focusin` and `focusout` events which bubble.
+        //     // @see http://www.quirksmode.org/blog/archives/2008/04/delegating_the.html
+        //     ReactBrowserEventEmitter.ReactEventListener.trapBubbledEvent(
+        //       topLevelTypes.topFocus,
+        //       'focusin',
+        //       mountAt
+        //     );
+        //     ReactBrowserEventEmitter.ReactEventListener.trapBubbledEvent(
+        //       topLevelTypes.topBlur,
+        //       'focusout',
+        //       mountAt
+        //     );
+        //   }
+        //
+        //
+        //
+        //   // to make sure blur and focus event listeners are only attached once
+        //   isListening[topLevelTypes.topBlur] = true;
+        //   isListening[topLevelTypes.topFocus] = true;
+
         } else if (topEventMapping.hasOwnProperty(dependency)) {
           ReactBrowserEventEmitter.ReactEventListener.trapBubbledEvent(
             dependency,

@@ -15,7 +15,8 @@ var EventPluginHub = require('EventPluginHub');
 
 function runEventQueueInBatch(events) {
   EventPluginHub.enqueueEvents(events);
-  EventPluginHub.processEventQueue(false);
+  EventPluginHub.processEventQueue(false); // mouseEnter: -7
+  // it takes events and enqueues them
 }
 
 var ReactEventEmitterMixin = {
@@ -34,8 +35,12 @@ var ReactEventEmitterMixin = {
       targetInst,
       nativeEvent,
       nativeEventTarget
-    );
-    runEventQueueInBatch(events);
+    ); // HERE magic gets done: _dispatchInstances and _dispatchListeners start
+    // getting listed with info about an input and a form; before this there
+    // was no direct info about it (only obtainable from native events)
+    runEventQueueInBatch(events); // mouseEnter: -8
+    // here it tells EventPluginHub to transform React and native info about
+    // an event into an events array
   },
 };
 

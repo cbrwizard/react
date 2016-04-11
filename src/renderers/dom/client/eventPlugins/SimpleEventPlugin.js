@@ -561,7 +561,8 @@ var SimpleEventPlugin = {
       case topLevelTypes.topMouseOut:
       case topLevelTypes.topMouseOver:
       case topLevelTypes.topMouseUp:
-        EventConstructor = SyntheticMouseEvent;
+        EventConstructor = SyntheticMouseEvent; // SyntheticMouseEvent is used
+        // for mouse events (obviously), which just creates an interface
         break;
       case topLevelTypes.topDrag:
       case topLevelTypes.topDragEnd:

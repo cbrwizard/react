@@ -39,7 +39,9 @@ var eventQueue = null;
  */
 var executeDispatchesAndRelease = function(event, simulated) {
   if (event) {
-    EventPluginUtils.executeDispatchesInOrder(event, simulated);
+    EventPluginUtils.executeDispatchesInOrder(event, simulated); // mouseEnter: -4
+    // dispatches an event and releases it afterwards so that you can't collect
+    // info about it in devtools, etc (prob. for optimization reasons)
 
     if (!event.isPersistent()) {
       event.constructor.release(event);
@@ -50,7 +52,8 @@ var executeDispatchesAndReleaseSimulated = function(e) {
   return executeDispatchesAndRelease(e, true);
 };
 var executeDispatchesAndReleaseTopLevel = function(e) {
-  return executeDispatchesAndRelease(e, false);
+  return executeDispatchesAndRelease(e, false); // mouseEnter: -5
+  // just calls executeDispatchesAndRelease and tells that it's not simulated
 };
 
 /**
@@ -188,14 +191,17 @@ var EventPluginHub = {
     for (var i = 0; i < plugins.length; i++) {
       // Not every plugin in the ordering may be loaded at runtime.
       var possiblePlugin = plugins[i];
-      if (possiblePlugin) {
+      if (possiblePlugin) { // here it iterates over every event plugin;
+        // and tries to get data from there.
         var extractedEvents = possiblePlugin.extractEvents(
           topLevelType,
           targetInst,
           nativeEvent,
           nativeEventTarget
         );
-        if (extractedEvents) {
+        if (extractedEvents) { // if something was obtained from any plugin -
+          // it gets added to a result array.
+          // So the magic happens in one of the event plugins.
           events = accumulateInto(events, extractedEvents);
         }
       }
@@ -235,7 +241,8 @@ var EventPluginHub = {
       forEachAccumulated(
         processingEventQueue,
         executeDispatchesAndReleaseTopLevel
-      );
+      ); // mouseEnter: -6
+      // it grabs events and runs a function for each
     }
     invariant(
       !eventQueue,
