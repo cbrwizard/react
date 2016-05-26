@@ -113,6 +113,8 @@ var topEventMapping = {
   topEnded: 'ended',
   topError: 'error',
   topFocus: 'focus',
+  topFocusIn: 'focusin',
+  topFocusOut: 'focusout',
   topInput: 'input',
   topKeyDown: 'keydown',
   topKeyPress: 'keypress',
@@ -241,9 +243,18 @@ var ReactBrowserEventEmitter = Object.assign({}, ReactEventEmitterMixin, {
     var dependencies =
       EventPluginRegistry.registrationNameDependencies[registrationName];
 
+      // console.log("isEventSupported('focusin')", isEventSupported('focusin')) // probably no. yup - false in Chrome
+      // also no in firefox.
+      // this is quite weird since normal dom onfocusin works in Chrome.
+      // LOL looks like isEventSupported is wrong! it checks events on div, not on an input.
+      // if we check input, we might get the right results. And looks like
+      // isEventSupported('focusin') ALWAYS returns false because this event can't be applied to a div.
+      // Let's maybe fix isEventSupported then.
     var topLevelTypes = EventConstants.topLevelTypes;
+    // console.log("dependencies", dependencies) // does it just iterate them all?
     for (var i = 0; i < dependencies.length; i++) {
       var dependency = dependencies[i];
+      // console.log("dependency", dependency) // just all events
       if (!(
             isListening.hasOwnProperty(dependency) &&
             isListening[dependency]
@@ -291,8 +302,11 @@ var ReactBrowserEventEmitter = Object.assign({}, ReactEventEmitterMixin, {
         // Wrong - without these lines the events do not fire at all.
         // Probably it's because we don't trap any events for focus/blur.
         // Maybe we need to trap bubbled event. - No. This also breaks everything.
+        //
+        // it must be firing twice because we have these 2 and others 2 in one conditional block
         else if (dependency === topLevelTypes.topFocus ||
             dependency === topLevelTypes.topBlur) {
+              // console.log('dependency', dependency)
 
           if (isEventSupported('focus', true)) {
             ReactBrowserEventEmitter.ReactEventListener.trapCapturedEvent(
@@ -305,16 +319,30 @@ var ReactBrowserEventEmitter = Object.assign({}, ReactEventEmitterMixin, {
               'blur',
               mountAt
             );
+
+            // let's also register these two ALWAYS just to see the result.
+            // If it works in Chrome - figure out how to check for it properly.
+            // But before - need to introduce 2 new topLevelTypes.
+            //
+            // Commenting since probably we need to put these into another conditional block
+            // ReactBrowserEventEmitter.ReactEventListener.trapBubbledEvent(
+            //   topLevelTypes.topFocusIn,
+            //   'focusin',
+            //   mountAt
+            // );
+            // ReactBrowserEventEmitter.ReactEventListener.trapBubbledEvent(
+            //   topLevelTypes.topFocusOut,
+            //   'focusout',
+            //   mountAt
+            // );
           }
-
-
-
-        // TODO: check if this fires in Chrome, Firefox and why.
-        // Try capturing them here.
-        // Maybe we need to add topFocusIn and topFocusOut and refer them here.
-        //   } else if (isEventSupported('focusin')) {
+          // else if (isEventSupported('focusin')) {
+          // TODO: check if this fires in Chrome, Firefox and why. looks like it doesnt fire
+          // Try capturing them here.
+          // Maybe we need to add topFocusIn and topFocusOut and refer them here.
         //     // IE has `focusin` and `focusout` events which bubble.
         //     // @see http://www.quirksmode.org/blog/archives/2008/04/delegating_the.html
+        //  console.log('supported')
         //     ReactBrowserEventEmitter.ReactEventListener.trapBubbledEvent(
         //       topLevelTypes.topFocus,
         //       'focusin',
@@ -330,8 +358,29 @@ var ReactBrowserEventEmitter = Object.assign({}, ReactEventEmitterMixin, {
         //
         //
         //   // to make sure blur and focus event listeners are only attached once
-        //   isListening[topLevelTypes.topBlur] = true;
-        //   isListening[topLevelTypes.topFocus] = true;
+        //   // No need for them anymore since there will be different types
+          // isListening[topLevelTypes.topBlur] = true;
+          // isListening[topLevelTypes.topFocus] = true;
+
+        }
+        else if (dependency === topLevelTypes.topFocusIn ||
+            dependency === topLevelTypes.topFocusOut) {
+          if (isEventSupported('focus', true)) {
+            ReactBrowserEventEmitter.ReactEventListener.trapBubbledEvent(
+              topLevelTypes.topFocusIn,
+              'focusin',
+              mountAt
+            );
+            ReactBrowserEventEmitter.ReactEventListener.trapBubbledEvent(
+              topLevelTypes.topFocusOut,
+              'focusout',
+              mountAt
+            );
+          } // moving things here helped to reduce the number of onFocusIn/Out event fires by 1.
+          // but still it duplicate-fires.
+          // does it do that only for focus or for everything?
+          // checked - it fires twice only for focus/blur/in/out, not for mouse-ish.
+
 
         } else if (topEventMapping.hasOwnProperty(dependency)) {
           ReactBrowserEventEmitter.ReactEventListener.trapBubbledEvent(

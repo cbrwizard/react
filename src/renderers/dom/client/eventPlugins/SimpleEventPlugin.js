@@ -191,6 +191,18 @@ var eventTypes = {
       captured: keyOf({onFocusCapture: true}),
     },
   },
+  focusIn: {
+    phasedRegistrationNames: {
+      bubbled: keyOf({onFocusIn: true}),
+      captured: keyOf({onFocusInCapture: true}),
+    },
+  },
+  focusOut: {
+    phasedRegistrationNames: {
+      bubbled: keyOf({onFocusOut: true}),
+      captured: keyOf({onFocusOutCapture: true}),
+    },
+  }, // something might be here but dunno
   input: {
     phasedRegistrationNames: {
       bubbled: keyOf({onInput: true}),
@@ -438,6 +450,8 @@ var topLevelEventsToDispatchConfig = {
   topEnded:           eventTypes.ended,
   topError:           eventTypes.error,
   topFocus:           eventTypes.focus,
+  topFocusIn:         eventTypes.focusIn,
+  topFocusOut:        eventTypes.focusOut, // maybe ok
   topInput:           eventTypes.input,
   topInvalid:         eventTypes.invalid,
   topKeyDown:         eventTypes.keyDown,
@@ -545,6 +559,8 @@ var SimpleEventPlugin = {
         break;
       case topLevelTypes.topBlur:
       case topLevelTypes.topFocus:
+      case topLevelTypes.topFocusIn:
+      case topLevelTypes.topFocusOut: // seems to be ok
         EventConstructor = SyntheticFocusEvent;
         break;
       case topLevelTypes.topClick:

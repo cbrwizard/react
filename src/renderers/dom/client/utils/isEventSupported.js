@@ -50,6 +50,18 @@ function isEventSupported(eventNameSuffix, capture) {
     var element = document.createElement('div');
     element.setAttribute(eventName, 'return;');
     isSupported = typeof element[eventName] === 'function';
+    // console.log('checking event ', eventName)
+    // console.log('isSupported for a div ', isSupported)
+
+    // if (!isSupported) {
+    //   var element = document.createElement('input');
+    //   element.setAttribute('type', 'text');
+    //   element.setAttribute(eventName, 'return;');
+    //   isSupported = typeof element[eventName] === 'function';
+    //   console.log('isSupported for an input ', isSupported)
+    // }
+    // ok looks like onfocusin is really not supported for Chrome. it can't be checked
+    // with an onfocusin check.
   }
 
   if (!isSupported && useHasFeature && eventNameSuffix === 'wheel') {
